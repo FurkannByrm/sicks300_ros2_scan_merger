@@ -1,34 +1,36 @@
 # Front laser
 laser_front:
   ros__parameters:
-    port: /dev/ttyS1
-    baud: 500000
-    scan_duration: 0.025 # No info about that in SICK-docu, but 0.025 is believable and looks good in rviz
-    scan_cycle_time: 0.040 # SICK-docu says S300 scans every 40ms
-    scan_delay: 0.075
-    inverted: false
-    scan_id: 7
-    frame_id: base_laser_link
-    scan_topic: scan
-    debug: false
+    port: /dev/ttyS0 # RS-422 bağlantısı için doğru port
+    baud: 115200  # Baud rate'in doğru olduğundan emin olun
+    scan_duration: 0.025  # Tarama süresi
+    scan_cycle_time: 0.040  # Tarama döngü süresi
+    scan_delay: 0.075  # Tarama gecikmesi
+    inverted: false  # Taramanın ters olup olmadığını kontrol edin
+    scan_id: 7  # Tarama kimliği
+    frame_id: scan_link_0  # Frame ID
+    scan_topic: scan_0  # Taramaların yayınlanacağı topic
+    debug: false  # Hata ayıklama kapalı
     fields:
       '1':
-        scale: 0.01
-        start_angle: -2.36
-        stop_angle: 2.36
+        scale: 0.01  # Ölçek
+        start_angle: -2.36  # Başlangıç açısı
+        stop_angle: 2.36  # Bitiş açısı
 
-# Filter the laserscan behind the robot
-scan_filter:
+laser_rear:
   ros__parameters:
-    lower_angle: -2.05
-    upper_angle: 2.22
-
-# Filter the laserscan behind the robot using laser_filters
-#scan_filter:
-#  ros__parameters:
-#    filter1:
-#      name: inside
-#      type: laser_filters/LaserScanAngularBoundsFilter
-#      params:
-#        lower_angle: -2.05
-#        upper_angle: 2.22
+    port: /dev/ttyS1 # RS-422 bağlantısı için doğru port
+    baud: 115200  # Baud rate'in doğru olduğundan emin olun
+    scan_duration: 0.025  # Tarama süresi
+    scan_cycle_time: 0.040  # Tarama döngü süresi
+    scan_delay: 0.075  # Tarama gecikmesi
+    inverted: false  # Taramanın ters olup olmadığını kontrol edin
+    scan_id: 7  # Tarama kimliği
+    frame_id: scan_link_1  # Frame ID
+    scan_topic: scan_1 # Taramaların yayınlanacağı topic
+    debug: false  # Hata ayıklama kapalı
+    fields:
+      '1':
+        scale: 0.01  # Ölçek
+        start_angle: -2.36  # Başlangıç açısı
+        stop_angle: 2.36  # Bitiş açısı

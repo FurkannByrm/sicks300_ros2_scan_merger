@@ -1,6 +1,23 @@
+/*
+ * SICK S300 2 ROS NODE
+ *
+ * Copyright (c) 2022-2023 Alberto José Tudela Roldán <ajtudela@gmail.com>
+ * 
+ * This file is part of sicks300_2 project.
+ * 
+ * All rights reserved.
+ *
+ */
+
+// C++
+#include <chrono>
+#include <thread>
+
+// ROS
+#include "rclcpp/qos.hpp"
+#include "nav2_util/node_utils.hpp"
 
 #include "sicks300_ros2_scan_merger/sicks300_node.hpp"
-
 
 using namespace std::chrono_literals;
 

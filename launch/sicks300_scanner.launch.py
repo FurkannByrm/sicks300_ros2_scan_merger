@@ -43,10 +43,10 @@ def generate_launch_description():
     )
 
     # Prepare the sicks300_2 node.
-    sicks300_2_node = LifecycleNode(
+    sicks300_node_0 = LifecycleNode(
         package = 'sicks300_ros2_scan_merger',
         namespace = '',
-        executable = 'sicks300_2',
+        executable = 'sicks300_ros2_scan_merger',
         name = 'laser_front',
         parameters = [sicks300_param_file],
         emulate_tty = True,
@@ -55,67 +55,61 @@ def generate_launch_description():
             '--ros-args', 
             '--log-level', ['laser_front:=', LaunchConfiguration('log-level')]]
     )
-
-    # # Prepare the filter node.
-    # filter_node = Node(
-    #     package = 'sicks300_2',
-    #     namespace = '',
-    #     executable = 'scan_filter',
-    #     name = 'scan_filter',
-    #     parameters = [sicks300_param_file],
-    #     emulate_tty = True,
-    #     output='screen',
-    #     remappings=[
-    #         ('/scan_filtered', '/scan/filtered')],
-    #     arguments=[
-    #         '--ros-args', 
-    #         '--log-level', ['scan_filter:=', LaunchConfiguration('log-level')]]
-    # )
-
-    # laser_filter_node = Node(
-    #     package = 'laser_filters',
-    #     namespace = '',
-    #     executable = 'scan_to_scan_filter_chain',
-    #     name = 'scan_filter',
-    #     parameters = [sicks300_param_file],
-    #     emulate_tty = True,
-    #     output='screen',
-    #     remappings=[
-    #         ('/scan_filtered', '/scan/filtered')],
-    #     arguments=[
-    #         '--ros-args', 
-    #         '--log-level', ['scan_filter:=', LaunchConfiguration('log-level')]]
-    # )
-
     # When the sick node reaches the 'inactive' state, make it take the 'activate' transition.
-    register_event_handler_for_sick_reaches_inactive_state = RegisterEventHandler(
+    register_event_handler_for_sick_reaches_inactive_state_0 = RegisterEventHandler(
         OnStateTransition(
-            target_lifecycle_node = sicks300_2_node,
+            target_lifecycle_node = sicks300_node_0,
             goal_state = 'inactive',
             entities = [
                 EmitEvent(event = ChangeState(
-                    lifecycle_node_matcher = launch.events.matches_action(sicks300_2_node),
+                    lifecycle_node_matcher = launch.events.matches_action(sicks300_node_0),
+                    transition_id = lifecycle_msgs.msg.Transition.TRANSITION_ACTIVATE,
+                )),
+            ],
+        )
+    )
+    # Make the sicks300_2 node take the 'configure' transition.
+    emit_event_to_request_that_sick_does_configure_transition = EmitEvent(
+            event = ChangeState(
+            lifecycle_node_matcher = launch.events.matches_action(sicks300_node_0),
+            transition_id = lifecycle_msgs.msg.Transition.TRANSITION_CONFIGURE,
+        )
+    )
+    # Prepare the sicks300_2 node.
+    sicks300_node_1 = LifecycleNode(
+        package = 'sicks300_ros2_scan_merger',
+        namespace = '',
+        executable = 'sicks300_ros2_scan_merger',
+        name = 'laser_rear',
+        parameters = [sicks300_param_file],
+        emulate_tty = True,
+        output='screen', 
+        arguments=[
+            '--ros-args', 
+            '--log-level', ['laser_rear:=', LaunchConfiguration('log-level')]]
+    )
+    
+
+
+
+    # # When the sick node reaches the 'inactive' state, make it take the 'activate' transition.
+    register_event_handler_for_sick_reaches_inactive_state_1 = RegisterEventHandler(
+        OnStateTransition(
+            target_lifecycle_node = sicks300_node_1,
+            goal_state = 'inactive',
+            entities = [
+                EmitEvent(event = ChangeState(
+                    lifecycle_node_matcher = launch.events.matches_action(sicks300_node_1),
                     transition_id = lifecycle_msgs.msg.Transition.TRANSITION_ACTIVATE,
                 )),
             ],
         )
     )
 
-    # When the sick node reaches the 'active' state, start the filter node.
-    register_event_handler_for_sick_reaches_active_state = RegisterEventHandler(
-        OnStateTransition(
-            target_lifecycle_node = sicks300_2_node,
-            goal_state = 'active',
-            entities = [
-                # filter_node
-            ],
-        )
-    )
-
-    # Make the sicks300_2 node take the 'configure' transition.
-    emit_event_to_request_that_sick_does_configure_transition = EmitEvent(
+    #Make the sicks300_2 node take the 'configure' transition.
+    emit_event_to_request_that_sick_does_configure_transition_2 = EmitEvent(
             event = ChangeState(
-            lifecycle_node_matcher = launch.events.matches_action(sicks300_2_node),
+            lifecycle_node_matcher = launch.events.matches_action(sicks300_node_1),
             transition_id = lifecycle_msgs.msg.Transition.TRANSITION_CONFIGURE,
         )
     )
@@ -123,8 +117,10 @@ def generate_launch_description():
     return LaunchDescription([
         sicks300_param_file_launch_arg,
         declare_log_level_arg,
-        register_event_handler_for_sick_reaches_inactive_state,
-        register_event_handler_for_sick_reaches_active_state,
-        sicks300_2_node,
+        register_event_handler_for_sick_reaches_inactive_state_0,
+        register_event_handler_for_sick_reaches_inactive_state_1,
+        sicks300_node_0,
+        sicks300_node_1,
         emit_event_to_request_that_sick_does_configure_transition,
+        emit_event_to_request_that_sick_does_configure_transition_2,
     ])

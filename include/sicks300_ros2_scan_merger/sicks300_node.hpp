@@ -1,15 +1,19 @@
+/*
+ * SICK S300 2 ROS NODE
+ *
+ * Copyright (c) 2022-2023 Alberto José Tudela Roldán <ajtudela@gmail.com>
+ * 
+ * This file is part of sicks300_2 project.
+ * 
+ * All rights reserved.
+ *
+ */
 
-#ifndef _SICKS300_NODE_HPP_
-#define _SICKS300_NODE_HPP_
+#ifndef SICKS300_2__SICKS300_2_HPP_
+#define SICKS300_2__SICKS300_2_HPP_
 
 // C++
 #include <string>
-#include <array>
-#include <iostream>
-#include <cmath>
-#include <chrono>
-#include <thread>
-
 
 // ROS
 #include "rclcpp/rclcpp.hpp"
@@ -19,7 +23,6 @@
 #include "std_msgs/msg/bool.hpp"
 #include "sensor_msgs/msg/laser_scan.hpp"
 #include "diagnostic_msgs/msg/diagnostic_array.hpp"
-#include "nav2_util/node_utils.hpp"
 
 // Common
 #include "common/ScannerSickS300.hpp"
@@ -60,5 +63,4 @@ class SickS300: public rclcpp_lifecycle::LifecycleNode{
 		void publishError(std::string error);
 		void publishWarn(std::string warn);
 };
-
 #endif
