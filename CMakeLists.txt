@@ -35,6 +35,10 @@ find_package(PCL REQUIRED)
 include_directories(
   include
 )
+include_directories(
+  include
+  ${PCL_INCLUDE_DIRS}
+)
 add_executable(${PROJECT_NAME}
   src/common/ScannerSickS300.cpp
   src/common/SerialIO.cpp
@@ -56,8 +60,29 @@ ament_target_dependencies(${PROJECT_NAME}
 )
 target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
 
+add_executable(merger_node
+  src/common/ScannerSickS300.cpp
+  src/common/SerialIO.cpp
+  src/sicks300_node.cpp
+  src/merger_main.cpp
+)
+ament_target_dependencies(merger_node
+  rclcpp_lifecycle
+  std_msgs
+  sensor_msgs
+  diagnostic_msgs
+  nav2_util
+  rclcpp 
+  pcl_conversions
+  rcl_interfaces
+  rcutils
+  tf2_geometry_msgs
+  geometry_msgs
+)
+target_link_libraries(merger_node ${Boost_LIBRARIES})
+
 install(TARGETS
-${PROJECT_NAME}
+${PROJECT_NAME} merger_node
 DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY include/${PROJECT_NAME}/

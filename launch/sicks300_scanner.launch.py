@@ -42,6 +42,27 @@ def generate_launch_description():
         description='Logging level (info, debug, ...)'
     )
 
+    scan_merger = Node(
+        package='sicks300_ros2_scan_merger',
+        namespace = '',
+        executable='merger_node',
+        name = 'ros2_laser_scan_merger',
+        parameters=[sicks300_param_file],
+        output='screen',
+        respawn=True,
+        respawn_delay=2,
+    )
+    pointcloud = Node(
+        package='pointcloud_to_laserscan',
+        namespace = '',
+        executable='pointcloud_to_laserscan_node',
+        name = 'pointcloud_to_laserscan',
+        parameters=[sicks300_param_file],
+        arguments=[
+            '--ros-args', 
+            '--log-level', ['pointcloud_to_laserscan:=', LaunchConfiguration('log-level')]]
+    )
+
     # Prepare the sicks300_2 node.
     sicks300_node_0 = LifecycleNode(
         package = 'sicks300_ros2_scan_merger',
@@ -69,7 +90,7 @@ def generate_launch_description():
         )
     )
     # Make the sicks300_2 node take the 'configure' transition.
-    emit_event_to_request_that_sick_does_configure_transition = EmitEvent(
+    emit_event_to_request_that_sick_does_configure_transition_0 = EmitEvent(
             event = ChangeState(
             lifecycle_node_matcher = launch.events.matches_action(sicks300_node_0),
             transition_id = lifecycle_msgs.msg.Transition.TRANSITION_CONFIGURE,
@@ -107,7 +128,7 @@ def generate_launch_description():
     )
 
     #Make the sicks300_2 node take the 'configure' transition.
-    emit_event_to_request_that_sick_does_configure_transition_2 = EmitEvent(
+    emit_event_to_request_that_sick_does_configure_transition_1 = EmitEvent(
             event = ChangeState(
             lifecycle_node_matcher = launch.events.matches_action(sicks300_node_1),
             transition_id = lifecycle_msgs.msg.Transition.TRANSITION_CONFIGURE,
@@ -121,6 +142,8 @@ def generate_launch_description():
         register_event_handler_for_sick_reaches_inactive_state_1,
         sicks300_node_0,
         sicks300_node_1,
-        emit_event_to_request_that_sick_does_configure_transition,
-        emit_event_to_request_that_sick_does_configure_transition_2,
+        scan_merger,
+        pointcloud,
+        emit_event_to_request_that_sick_does_configure_transition_0,
+        emit_event_to_request_that_sick_does_configure_transition_1,
     ])

@@ -13,9 +13,19 @@
 #define SICKS300_2__SICKS300_2_HPP_
 
 // C++
+#include <cmath>
+
 #include <string>
+#include <vector>
+#include <array>
+#include <iostream>
 
 // ROS
+#include "sensor_msgs/msg/laser_scan.hpp"
+#include "pcl_conversions/pcl_conversions.h"
+#include "sensor_msgs/msg/point_cloud2.hpp"
+#include "sensor_msgs/point_cloud2_iterator.hpp"
+#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_lifecycle/lifecycle_node.hpp"
 #include "rclcpp_lifecycle/lifecycle_publisher.hpp"
@@ -63,4 +73,39 @@ class SickS300: public rclcpp_lifecycle::LifecycleNode{
 		void publishError(std::string error);
 		void publishWarn(std::string warn);
 };
+
+
+
+class ScanMerger : public rclcpp::Node{
+
+	public:
+	ScanMerger();
+
+	private:
+	void scan_callback1(const sensor_msgs::msg::LaserScan::SharedPtr _msg);
+    void scan_callback2(const sensor_msgs::msg::LaserScan::SharedPtr _msg);
+	void update_point_cloud_rgb();
+    float GET_R(float x, float y);
+    float GET_THETA(float x, float y);
+    float interpolate(float angle_1, float angle_2, float magnitude_1, float magnitude_2, float current_angle);
+    void initialize_params();
+    void refresh_params();
+	std::string topic1_, topic2_, cloudTopic_, cloudFrameId_;
+	bool show1_, show2_, flip1_, flip2_, inverse1_, inverse2_;
+	float laser1XOff_, laser1YOff_, laser1ZOff_, laser1Alpha_, laser1AngleMin_, laser1AngleMax_;
+	uint8_t laser1R_, laser1G_, laser1B_;
+
+	float laser2XOff_, laser2YOff_, laser2ZOff_, laser2Alpha_, laser2AngleMin_, laser2AngleMax_;
+	uint8_t laser2R_, laser2G_, laser2B_;
+
+	rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr sub1_;
+	rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr sub2_;
+	rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr point_cloud_pub_;
+
+	sensor_msgs::msg::LaserScan::SharedPtr laser1_;
+	sensor_msgs::msg::LaserScan::SharedPtr laser2_;
+
+};
+
+
 #endif

@@ -7,10 +7,8 @@ int main(int argc, char** argv) {
     rclcpp::init(argc, argv);
 
 
-    auto sick_s300_node = std::make_shared<SickS300>("sick_s300");
     auto scan_merger_node = std::make_shared<ScanMerger>();
     rclcpp::executors::MultiThreadedExecutor executor;
-    executor.add_node(sick_s300_node->get_node_base_interface());
     executor.add_node(scan_merger_node);
     executor.spin();
 
